@@ -95,3 +95,39 @@
 (define at-root?
   (lambda (bintree)
     (null? (caddr bintree))))
+(define-syntax define-variant
+  (syntax-rules ()
+    ((define-variant variant (field-name ...) (field-value ...))
+     (lambda (some-name)
+       (cond
+	((eq? some-name 'variant) #t)
+	((eq? some-name 'field-name) 'field-value) ...
+	(else #f))))))
+(define-syntax define-datatype
+  (syntax-rules ()
+    ((define-datatype name name? (variant (field field?) ...) ...)
+     (begin
+      (define and:define-datatype (lambda (x y) (and x y)))
+      (define name?
+	(lambda (data)
+	  (cond
+	   ((data 'variant)
+	    (reduce and:define-datatype #t (list (field? (data 'field)) ...))) ... 
+	   (else #f))))
+      (define variant
+	(lambda (field ...)
+	  (lambda (some-name)
+	    (cond
+	     ((eqv? some-name 'variant) #t)
+	     ((eqv? some-name 'field) field) ...
+	     (else #f))))) ...))))
+(define-datatype lc-exp lc-exp?
+  (var-exp
+   (var identifier?))
+  (lambda-exp
+   (bound-var identifier?)
+   (body lc-exp?))
+  (app-exp
+   (rator lc-exp?)
+   (rand lc-exp?)))
+	  
