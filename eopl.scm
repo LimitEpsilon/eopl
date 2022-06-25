@@ -120,6 +120,7 @@
 	    (cond
 	     ((eqv? some-name 'variant) #t)
 	     ((eqv? some-name 'field) field) ...
+	     ((eqv? some-name 'name) (list field ...))
 	     (else #f))))) ...))))
 (define-datatype lc-exp lc-exp?
   (var-exp
@@ -130,4 +131,28 @@
   (app-exp
    (rator lc-exp?)
    (rand lc-exp?)))
+(define identity (lambda-exp 'x (var-exp 'x)))
+(define-syntax cases
+  (syntax-rules (else)
+    ((cases name exp
+	    (variant (field ...) consequent) ...)
+     (cond ((exp 'variant)
+	    (apply (lambda (field ...) consequent) (exp 'name))) ...))
+    ((cases name exp clauses (else default))
+     ((cases name exp clauses) (else default)))))
+(define occurs-free?
+  (lambda (search-var exp)
+    (cases lc-exp exp
+	   (var-exp (var) (eqv? var search-var))
+	   (lambda-exp (bound-var body)
+		       (and
+			(not (eqv? search-var bound-var))
+			(occurs-free? search-var body)))
+	   (app-exp (rator rand)
+		    (or
+		     (occurs-free? search-var rator)
+		     (occurs-free? search-var rand))))))
+(occurs-free? 'x identity)
+      
+      
 	  
