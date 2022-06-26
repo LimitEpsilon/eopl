@@ -95,14 +95,6 @@
 (define at-root?
   (lambda (bintree)
     (null? (caddr bintree))))
-(define-syntax define-variant
-  (syntax-rules ()
-    ((define-variant variant (field-name ...) (field-value ...))
-     (lambda (some-name)
-       (cond
-	((eq? some-name 'variant) #t)
-	((eq? some-name 'field-name) 'field-value) ...
-	(else #f))))))
 (define-syntax define-datatype
   (syntax-rules ()
     ((define-datatype name name? (variant (field field?) ...) ...)
