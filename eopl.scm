@@ -99,12 +99,13 @@
   (syntax-rules ()
     ((define-datatype name name? (variant (field field?) ...) ...)
      (begin
-      (define and:define-datatype (lambda (x y) (and x y)))
       (define name?
 	(lambda (data)
 	  (cond
 	   ((data 'variant)
-	    (reduce and:define-datatype #t (list (field? (data 'field)) ...))) ... 
+	    (reduce (lambda (x y) (and x y))
+		    #t
+		    (list (field? (data 'field)) ...))) ... 
 	   (else #f))))
       (define variant
 	(lambda (field ...)
@@ -123,7 +124,7 @@
   (app-exp
    (rator lc-exp?)
    (rand lc-exp?)))
-(define identity (lambda-exp 'x (var-exp 'x)))
+(define identity (lambda-exp 'y (var-exp 'y)))
 (define-syntax cases
   (syntax-rules (else expand)
     ((cases name exp (v (f ...) c) . rest)
@@ -151,9 +152,5 @@
 	   (app-exp (rator rand)
 		    (or
 		     (occurs-free? search-var rator)
-		     (occurs-free? search-var rand)))
-	   (else #f))))
-(occurs-free? 'x identity)
-      
-      
+		     (occurs-free? search-var rand))))))
 	  
