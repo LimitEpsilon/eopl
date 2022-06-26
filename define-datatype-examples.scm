@@ -17,13 +17,13 @@
     (cases lc-exp exp
 	   (var-exp (var) (eqv? var search-var))
 	   (lambda-exp (bound-var body)
-      (and
-			  (not (eqv? search-var bound-var))
-		  	(occurs-free? search-var body)))
+		           (and
+			        (not (eqv? search-var bound-var))
+		  	        (occurs-free? search-var body)))
 	   (app-exp (rator rand)
-		  (or
-		    (occurs-free? search-var rator)
-		    (occurs-free? search-var rand))))))
+		    (or
+		     (occurs-free? search-var rator)
+		     (occurs-free? search-var rand))))))
 
 (occurs-free? 'x id)
 
