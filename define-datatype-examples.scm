@@ -1,4 +1,4 @@
-(load "~/projects/scheme/macros.scm")
+(load "./macros.scm")
 (define-datatype lc-exp lc-exp?
   (var-exp
    (var identifier?))
