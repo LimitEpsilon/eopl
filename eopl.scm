@@ -133,13 +133,21 @@
    (rand lc-exp?)))
 (define identity (lambda-exp 'x (var-exp 'x)))
 (define-syntax cases
-  (syntax-rules (else)
-    ((cases name exp
-	    (variant (field ...) consequent) ...)
+  (syntax-rules (else expand)
+    ((cases name exp (v (f ...) c) . rest)
+     ;; start to expand
+     (cases expand name exp ((v (f ...) c)) . rest))
+    ((cases expand name exp ((v (f ...) c) ...) (variant (field ...) consequent) . rest)
+     ;; more to expand
+     (cases expand name exp ((v (f ...) c) ... (variant (field ...) consequent)) . rest))
+    ((cases expand name exp ((v (f ...) c) ...) (else default))
+     ;; finished expanding, if there is an else clause
+     (cond ((exp 'v) (apply (lambda (f ...) c) (exp 'name))) ... (else default))) 
+    ((cases expand name exp
+	    ((variant (field ...) consequent) ...))
+     ;; finished expanding, if there was no else clause
      (cond ((exp 'variant)
-	    (apply (lambda (field ...) consequent) (exp 'name))) ...))
-    ((cases name exp clauses (else default))
-     ((cases name exp clauses) (else default)))))
+	    (apply (lambda (field ...) consequent) (exp 'name))) ...))))
 (define occurs-free?
   (lambda (search-var exp)
     (cases lc-exp exp
@@ -151,7 +159,8 @@
 	   (app-exp (rator rand)
 		    (or
 		     (occurs-free? search-var rator)
-		     (occurs-free? search-var rand))))))
+		     (occurs-free? search-var rand)))
+	   (else #f))))
 (occurs-free? 'x identity)
       
       
