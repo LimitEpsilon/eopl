@@ -1,4 +1,4 @@
-(import srfi-1)
+(use-modules (srfi srfi-1)) ;; for guile
 (define-syntax define-datatype
   (syntax-rules ()
     ((define-datatype name name? (variant (field field?) ...) ...)
@@ -19,6 +19,7 @@
 	     ((eqv? some-name 'field) field) ...
 	     ((eqv? some-name 'name) (list field ...))
 	     (else #f))))) ...))))
+       
 (define-syntax cases
   (syntax-rules (else expand)
     ((cases name exp (v (f ...) c) . rest)
