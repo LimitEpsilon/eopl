@@ -1,3 +1,4 @@
+(import srfi-1)
 (define-syntax define-datatype
   (syntax-rules ()
     ((define-datatype name name? (variant (field field?) ...) ...)

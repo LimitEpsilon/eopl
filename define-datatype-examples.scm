@@ -1,9 +1,9 @@
 (load "./macros.scm")
 (define-datatype lc-exp lc-exp?
   (var-exp
-   (var identifier?))
+   (var symbol?))
   (lambda-exp
-   (bound-var identifier?)
+   (bound-var symbol?)
    (body lc-exp?))
   (app-exp
    (rator lc-exp?)
